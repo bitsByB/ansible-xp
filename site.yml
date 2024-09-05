@@ -17,6 +17,27 @@
       update_cache: yes
     when: ansible_distribution == "Ubuntu"
 
+  - name: create user
+    tags: always
+    ansible.builtin.user:
+      name: bangbuild
+      groups: root
+
+  - name: add sudoers file for bangbuild
+    tags: always
+    ansible.builtin.copy:
+      src: sudoer_bangbuild
+      dest: /etc/sudoers.d/bangbuild
+      owner: root
+      group: root
+      mode: 0440
+
+  - name: add ssh key for bangbuild user
+    tags: always
+    ansible.builtin.authorized_key:
+      user: bangbuild
+      key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGPNGI/rbs1g1x3QSlKU06PHJouLGQYgShwA3co0mutr bert@ubuntu-ws"
+
 - hosts: web_servers
   tags: apache,ubuntu
   become: true
